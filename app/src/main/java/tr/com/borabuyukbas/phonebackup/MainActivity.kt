@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import tr.com.borabuyukbas.phonebackup.components.Header
 import tr.com.borabuyukbas.phonebackup.components.Navbar
 import tr.com.borabuyukbas.phonebackup.ui.theme.PhoneBackupTheme
 
@@ -30,6 +31,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Scaffold(
+                        topBar = {
+                            Header()
+                        },
                         bottomBar = {
                             Navbar()
                         }
