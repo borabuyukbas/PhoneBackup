@@ -3,10 +3,8 @@ package tr.com.borabuyukbas.phonebackup
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,10 +19,8 @@ import androidx.navigation.compose.rememberNavController
 import tr.com.borabuyukbas.phonebackup.components.Header
 import tr.com.borabuyukbas.phonebackup.components.Navbar
 import tr.com.borabuyukbas.phonebackup.components.NavbarItem
-import tr.com.borabuyukbas.phonebackup.screens.Calendar
-import tr.com.borabuyukbas.phonebackup.screens.CallLog
-import tr.com.borabuyukbas.phonebackup.screens.Contact
-import tr.com.borabuyukbas.phonebackup.screens.SMS
+import tr.com.borabuyukbas.phonebackup.screens.Backup
+import tr.com.borabuyukbas.phonebackup.screens.Restore
 import tr.com.borabuyukbas.phonebackup.ui.theme.PhoneBackupTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,10 +29,8 @@ fun Application() {
     val navController = rememberNavController()
 
     val navigationList = listOf(
-        NavbarItem("sms", "SMS", Icons.Filled.Email),
-        NavbarItem("contact", "Contacts", Icons.Filled.Person),
-        NavbarItem("call", "Call Logs", Icons.Filled.Call),
-        NavbarItem("calendar", "Calendar", Icons.Filled.DateRange),
+        NavbarItem("backup", "Backup", Icons.Filled.Build),
+        NavbarItem("restore", "Restore", Icons.Filled.Refresh)
     )
 
     PhoneBackupTheme {
@@ -52,11 +46,9 @@ fun Application() {
                     Navbar(navController, navigationList)
                 },
             ) { paddingValues ->
-                NavHost(navController = navController, startDestination = "sms", modifier = Modifier.padding(paddingValues)) {
-                    composable("sms") { SMS() }
-                    composable("contact") { Contact() }
-                    composable("call") { CallLog() }
-                    composable("calendar") { Calendar() }
+                NavHost(navController = navController, startDestination = "backup", modifier = Modifier.padding(paddingValues)) {
+                    composable("backup") { Backup() }
+                    composable("restore") { Restore() }
                 }
             }
         }
