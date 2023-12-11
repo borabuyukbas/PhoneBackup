@@ -13,8 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,8 +26,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: String) {
-    val (checkedState, onStateChange) = remember { mutableStateOf(false) }
+fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: String, checked: MutableState<Boolean>) {
+    val (checkedState, onStateChange) = checked
 
     val permissionState = rememberPermissionState(requiredPermission)
 
