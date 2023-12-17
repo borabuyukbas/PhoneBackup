@@ -16,7 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tr.com.borabuyukbas.phonebackup.components.PermissionCheckbox
+import tr.com.borabuyukbas.phonebackup.utils.Call
+import tr.com.borabuyukbas.phonebackup.utils.Contact
 
 @Composable
 fun Backup() {
@@ -25,6 +31,16 @@ fun Backup() {
     val callLogsChecked = remember { mutableStateOf(false) }
     val calendarChecked = remember { mutableStateOf(false) }
 
+    val smsLoading = remember { mutableStateOf(false) }
+    val contactsLoading = remember { mutableStateOf(false) }
+    val callLogsLoading = remember { mutableStateOf(false) }
+    val calendarLoading = remember { mutableStateOf(false) }
+
+    val smsProgress = remember { mutableFloatStateOf(0.0f) }
+    val contactsProgress = remember { mutableFloatStateOf(0.0f) }
+    val callLogsProgress = remember { mutableFloatStateOf(0.0f) }
+    val calendarProgress = remember { mutableFloatStateOf(0.0f) }
+
     Column (
         modifier = Modifier.padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -32,10 +48,10 @@ fun Backup() {
         Column (
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            PermissionCheckbox("SMS", Icons.Filled.Email, android.Manifest.permission.READ_SMS, smsChecked)
-            PermissionCheckbox("Contacts", Icons.Filled.Person, android.Manifest.permission.READ_CONTACTS, contactsChecked)
-            PermissionCheckbox("Call Logs", Icons.Filled.Phone, android.Manifest.permission.READ_CALL_LOG, callLogsChecked)
-            PermissionCheckbox("Calendar", Icons.Filled.DateRange, android.Manifest.permission.READ_CALENDAR, calendarChecked)
+            PermissionCheckbox("SMS", Icons.Filled.Email, android.Manifest.permission.READ_SMS, smsChecked, smsProgress, smsLoading)
+            PermissionCheckbox("Contacts", Icons.Filled.Person, android.Manifest.permission.READ_CONTACTS, contactsChecked, contactsProgress, contactsLoading)
+            PermissionCheckbox("Call Logs", Icons.Filled.Phone, android.Manifest.permission.READ_CALL_LOG, callLogsChecked, callLogsProgress, callLogsLoading)
+            PermissionCheckbox("Calendar", Icons.Filled.DateRange, android.Manifest.permission.READ_CALENDAR, calendarChecked, calendarProgress, calendarLoading)
         }
         Button(
             modifier = Modifier.fillMaxWidth(),

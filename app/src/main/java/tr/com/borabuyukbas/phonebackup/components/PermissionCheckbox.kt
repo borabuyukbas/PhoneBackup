@@ -9,10 +9,12 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +28,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: String, checked: MutableState<Boolean>) {
+fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: String, checked: MutableState<Boolean>, progress: MutableFloatState, loading: MutableState<Boolean>) {
     val (checkedState, onStateChange) = checked
 
     val permissionState = rememberPermissionState(requiredPermission)
@@ -68,6 +70,11 @@ fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: Stri
             ) {
                 Text("Allow")
             }
+        }
+        if (loading.value) {
+            CircularProgressIndicator(
+                progress = progress.floatValue
+            )
         }
     }
 }
