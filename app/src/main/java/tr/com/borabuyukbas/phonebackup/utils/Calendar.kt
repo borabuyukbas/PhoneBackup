@@ -5,24 +5,24 @@ import android.provider.CalendarContract
 import androidx.compose.runtime.MutableState
 
 class Calendar(
-    dtStart: Int,
-    dtEnd: Int,
-    duration: String,
-    description: String,
-    eventLocation: String,
-    eventTimeZone: String,
-    allDay: Boolean,
-    exDate: String,
-    exRule: String,
-    rDate: String,
-    rRule: String,
-    hasAlarm: Boolean,
-    status: Int,
-    selfAttendeeStatus: Int,
-    organizer: String,
-    hasAttendeeData: Boolean,
-    accessLevel: Int,
-    availability: Int
+    dtStart: Int?,
+    dtEnd: Int?,
+    duration: String?,
+    description: String?,
+    eventLocation: String?,
+    eventTimeZone: String?,
+    allDay: Boolean?,
+    exDate: String?,
+    exRule: String?,
+    rDate: String?,
+    rRule: String?,
+    hasAlarm: Boolean?,
+    status: Int?,
+    selfAttendeeStatus: Int?,
+    organizer: String?,
+    hasAttendeeData: Boolean?,
+    accessLevel: Int?,
+    availability: Int?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
         TODO("Not yet implemented")

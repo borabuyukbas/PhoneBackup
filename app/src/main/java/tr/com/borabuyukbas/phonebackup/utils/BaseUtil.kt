@@ -4,13 +4,15 @@ import android.content.Context
 import android.database.Cursor
 import androidx.compose.runtime.MutableState
 
-inline fun <reified T> getValue(cursor: Cursor, index: Int): T {
+inline fun <reified T> getValue(cursor: Cursor, index: Int): T? {
     val isNull = cursor.isNull(index)
 
+    if (isNull) return null
+
     return when (T::class) {
-        String::class -> (if (isNull) "" else cursor.getString(index)) as T
-        Boolean::class -> (if (isNull) false else cursor.getInt(index) == 1) as T
-        Int::class -> (if (isNull) 0 else cursor.getInt(index)) as T
+        String::class -> cursor.getString(index) as T
+        Boolean::class -> (cursor.getInt(index) == 1) as T
+        Int::class -> cursor.getInt(index) as T
         else -> throw Exception("Unhandled return type")
     }
 }

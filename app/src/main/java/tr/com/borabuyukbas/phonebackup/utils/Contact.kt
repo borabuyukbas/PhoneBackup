@@ -7,7 +7,7 @@ import androidx.compose.runtime.MutableState
 
 
 class Contact (
-    val name: String,
+    val name: String?,
     val phoneNumbers: List<String>
 ) : BaseUtil {
 
@@ -46,11 +46,11 @@ class Contact (
             var i = 0
             while (cursor.moveToNext()) {
 
-                val hasPhoneNumber: Boolean = getValue(cursor, 2)
+                val hasPhoneNumber = getValue<Boolean>(cursor, 2)
 
-                if (hasPhoneNumber) {
-                    val id: String = getValue(cursor, 0)
-                    val name: String = getValue(cursor, 1)
+                if (hasPhoneNumber != null && hasPhoneNumber) {
+                    val id = getValue<String>(cursor, 0)
+                    val name = getValue<String>(cursor, 1)
                     val phoneNumbers = mutableListOf<String>()
 
                     val queryArgs = Bundle()
@@ -66,8 +66,8 @@ class Contact (
                     )
                     if (phoneNumberCursor != null) {
                         while (phoneNumberCursor.moveToNext()) {
-                            val phoneNo: String = getValue(phoneNumberCursor, 0)
-                            phoneNumbers.add(phoneNo)
+                            val phoneNo = getValue<String>(phoneNumberCursor, 0)
+                            if (phoneNo != null) phoneNumbers.add(phoneNo)
                         }
                         phoneNumberCursor.close()
                     }
