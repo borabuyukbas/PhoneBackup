@@ -1,7 +1,6 @@
 package tr.com.borabuyukbas.phonebackup.utils
 
 import android.content.Context
-import android.os.Bundle
 import android.provider.ContactsContract
 import androidx.compose.runtime.MutableState
 
@@ -26,6 +25,33 @@ class Contact (
         ): List<Contact> {
             val returnList = mutableListOf<Contact>()
 
+            val phoneNumberMap: MutableMap<Int, MutableList<String>> = mutableMapOf()
+
+            val phoneNumberCursor = context.contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                arrayOf(
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                ),
+                null,
+                null
+            )
+            if (phoneNumberCursor != null) {
+                while (phoneNumberCursor.moveToNext()) {
+                    val phoneNo = getValue<String>(phoneNumberCursor, 0)
+                    val contactId = getValue<Int>(phoneNumberCursor, 1)
+
+                    if (phoneNo == null || contactId == null) continue
+
+                    if (!phoneNumberMap.containsKey(contactId)) {
+                        phoneNumberMap[contactId] = mutableListOf()
+                    }
+
+                    phoneNumberMap[contactId]!!.add(phoneNo)
+                }
+                phoneNumberCursor.close()
+            }
+
             val cursor = context.contentResolver.query(
                 ContactsContract.Contacts.CONTENT_URI,
                 arrayOf(
@@ -49,29 +75,9 @@ class Contact (
                 val hasPhoneNumber = getValue<Boolean>(cursor, 2)
 
                 if (hasPhoneNumber != null && hasPhoneNumber) {
-                    val id = getValue<String>(cursor, 0)
+                    val id = getValue<Int>(cursor, 0)
                     val name = getValue<String>(cursor, 1)
-                    val phoneNumbers = mutableListOf<String>()
-
-                    val queryArgs = Bundle()
-                    queryArgs.putString(ContactsContract.CommonDataKinds.Phone.CONTACT_ID, id)
-
-                    val phoneNumberCursor = context.contentResolver.query(
-                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                        arrayOf(
-                            ContactsContract.CommonDataKinds.Phone.NUMBER
-                        ),
-                        queryArgs,
-                        null
-                    )
-                    if (phoneNumberCursor != null) {
-                        while (phoneNumberCursor.moveToNext()) {
-                            val phoneNo = getValue<String>(phoneNumberCursor, 0)
-                            if (phoneNo != null) phoneNumbers.add(phoneNo)
-                        }
-                        phoneNumberCursor.close()
-                    }
-
+                    val phoneNumbers = phoneNumberMap[id] ?: listOf()
 
                     returnList.add(
                         Contact(
