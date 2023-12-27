@@ -1,5 +1,7 @@
 package tr.com.borabuyukbas.phonebackup.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,15 +20,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tr.com.borabuyukbas.phonebackup.components.PermissionCheckbox
+import tr.com.borabuyukbas.phonebackup.utils.AllUtils
 import tr.com.borabuyukbas.phonebackup.utils.Calendar
 import tr.com.borabuyukbas.phonebackup.utils.Call
 import tr.com.borabuyukbas.phonebackup.utils.Contact
 import tr.com.borabuyukbas.phonebackup.utils.SMS
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Backup() {
@@ -47,6 +53,26 @@ fun Backup() {
 
     val context = LocalContext.current
     val returnStr = remember { mutableStateOf("") }
+
+    val saveContent = remember { mutableStateOf("") }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json"),
+        onResult = {
+            if (it != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.IO) {
+                        val stream = context.contentResolver.openOutputStream(it)
+                        if (stream != null) {
+                            stream.write(saveContent.value.toByteArray())
+                            stream.close()
+                        }
+                        returnStr.value += "Backup successfully completed."
+                    }
+                }
+            }
+        }
+    )
+
 
     Column (
         modifier = Modifier.padding(32.dp),
@@ -70,42 +96,61 @@ fun Backup() {
                     contactsLoading.value = false
                     callLogsLoading.value = false
                     calendarLoading.value = false
+                    returnStr.value = ""
+
+                    var sms: List<SMS> = listOf()
+                    var contacts: List<Contact> = listOf()
+                    var calls: List<Call> = listOf()
+                    var calendar: List<Calendar> = listOf()
 
                     if (smsChecked.value) {
                         smsLoading.value = true
                         withContext(Dispatchers.IO) {
-                            val sms = SMS.getAll(context, smsProgress)
+                            sms = SMS.getAll(context, smsProgress)
                             returnStr.value += "Found ${sms.size} SMS\n"
                         }
-                        smsLoading.value = false
                     }
 
                     if (contactsChecked.value) {
                         contactsLoading.value = true
                         withContext(Dispatchers.IO) {
-                            val contacts = Contact.getAll(context, contactsProgress)
+                            contacts = Contact.getAll(context, contactsProgress)
                             returnStr.value += "Found ${contacts.size} Contacts\n"
                         }
-                        contactsLoading.value = false
                     }
 
                     if (callLogsChecked.value) {
                         callLogsLoading.value = true
                         withContext(Dispatchers.IO) {
-                            val calls = Call.getAll(context, callLogsProgress)
+                            calls = Call.getAll(context, callLogsProgress)
                             returnStr.value += "Found ${calls.size} Calls\n"
                         }
-                        callLogsLoading.value = false
                     }
 
                     if (calendarChecked.value) {
                         calendarLoading.value = true
                         withContext(Dispatchers.IO) {
-                            val calendar = Calendar.getAll(context, calendarProgress)
+                            calendar = Calendar.getAll(context, calendarProgress)
                             returnStr.value += "Found ${calendar.size} Calendar Events\n"
                         }
-                        calendarLoading.value = false
                     }
+
+                    withContext(Dispatchers.IO) {
+                        returnStr.value += "Converting data to JSON object.\n"
+                        saveContent.value = Gson().toJson(AllUtils(
+                            sms,
+                            contacts,
+                            calls,
+                            calendar
+                        ))
+
+                        launcher.launch("backup_${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"))}")
+                    }
+
+                    smsLoading.value = false
+                    contactsLoading.value = false
+                    callLogsLoading.value = false
+                    calendarLoading.value = false
                 }
             }
         ) {

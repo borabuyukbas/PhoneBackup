@@ -17,6 +17,12 @@ inline fun <reified T> getValue(cursor: Cursor, index: Int): T? {
     }
 }
 
+
+data class AllUtils(val sms: List<SMS>,
+                    val contacts: List<Contact>,
+                    val calls: List<Call>,
+                    val calendar: List<Calendar>)
+
 interface BaseUtil {
     fun importToDevice(context: Context)
     fun isExist(context: Context): Boolean
