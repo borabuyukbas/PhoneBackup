@@ -2,7 +2,11 @@ package tr.com.borabuyukbas.phonebackup.utils
 
 import android.content.Context
 import android.database.Cursor
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.MutableState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 inline fun <reified T> getValue(cursor: Cursor, index: Int): T? {
     val isNull = cursor.isNull(index)
@@ -17,6 +21,14 @@ inline fun <reified T> getValue(cursor: Cursor, index: Int): T? {
     }
 }
 
+fun createLogFunction (logText: MutableState<String>, scrollState: ScrollState): (String) -> Unit {
+    return {
+        CoroutineScope(Dispatchers.Default).launch {
+            logText.value += "${it}\n"
+            scrollState.scrollTo(scrollState.maxValue)
+        }
+    }
+}
 
 data class AllUtils(val sms: List<SMS>,
                     val contacts: List<Contact>,

@@ -2,10 +2,12 @@ package tr.com.borabuyukbas.phonebackup.screens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
@@ -31,6 +33,7 @@ import tr.com.borabuyukbas.phonebackup.utils.Calendar
 import tr.com.borabuyukbas.phonebackup.utils.Call
 import tr.com.borabuyukbas.phonebackup.utils.Contact
 import tr.com.borabuyukbas.phonebackup.utils.SMS
+import tr.com.borabuyukbas.phonebackup.utils.createLogFunction
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -52,7 +55,10 @@ fun Backup() {
     val calendarProgress = remember { mutableFloatStateOf(0.0f) }
 
     val context = LocalContext.current
+
     val returnStr = remember { mutableStateOf("") }
+    val returnScroll = rememberScrollState()
+    val log = createLogFunction(returnStr, returnScroll)
 
     val saveContent = remember { mutableStateOf("") }
     val launcher = rememberLauncherForActivityResult(
@@ -66,7 +72,7 @@ fun Backup() {
                             stream.write(saveContent.value.toByteArray())
                             stream.close()
                         }
-                        returnStr.value += "Backup successfully completed."
+                        log("Backup successfully completed.")
                     }
                 }
             }
@@ -107,7 +113,7 @@ fun Backup() {
                         smsLoading.value = true
                         withContext(Dispatchers.IO) {
                             sms = SMS.getAll(context, smsProgress)
-                            returnStr.value += "Found ${sms.size} SMS\n"
+                            log("Found ${sms.size} SMS")
                         }
                     }
 
@@ -115,7 +121,7 @@ fun Backup() {
                         contactsLoading.value = true
                         withContext(Dispatchers.IO) {
                             contacts = Contact.getAll(context, contactsProgress)
-                            returnStr.value += "Found ${contacts.size} Contacts\n"
+                            log("Found ${contacts.size} Contacts")
                         }
                     }
 
@@ -123,7 +129,7 @@ fun Backup() {
                         callLogsLoading.value = true
                         withContext(Dispatchers.IO) {
                             calls = Call.getAll(context, callLogsProgress)
-                            returnStr.value += "Found ${calls.size} Calls\n"
+                            log("Found ${calls.size} Calls")
                         }
                     }
 
@@ -131,12 +137,12 @@ fun Backup() {
                         calendarLoading.value = true
                         withContext(Dispatchers.IO) {
                             calendar = Calendar.getAll(context, calendarProgress)
-                            returnStr.value += "Found ${calendar.size} Calendar Events\n"
+                            log("Found ${calendar.size} Calendar Events")
                         }
                     }
 
                     withContext(Dispatchers.IO) {
-                        returnStr.value += "Converting data to JSON object.\n"
+                        log("Converting data to JSON object.")
                         saveContent.value = Gson().toJson(AllUtils(
                             sms,
                             contacts,
@@ -156,6 +162,11 @@ fun Backup() {
         ) {
             Text(text = "Backup")
         }
-        Text(text = returnStr.value)
+        Text(
+            text = returnStr.value,
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(returnScroll)
+        )
     }
 }
