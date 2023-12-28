@@ -37,7 +37,6 @@ data class AllUtils(val sms: List<SMS>,
 
 interface BaseUtil {
     fun importToDevice(context: Context)
-    fun isExist(context: Context): Boolean
 }
 
 interface BaseUtilHelper<T> {

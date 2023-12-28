@@ -4,7 +4,7 @@ import android.content.Context
 import android.provider.Telephony
 import androidx.compose.runtime.MutableState
 
-class SMS(
+data class SMS(
     val address: String?,
     val body: String?,
     val type: Int?,
@@ -12,10 +12,6 @@ class SMS(
     val read: Boolean?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
-    }
-
-    override fun isExist(context: Context): Boolean {
         TODO("Not yet implemented")
     }
 

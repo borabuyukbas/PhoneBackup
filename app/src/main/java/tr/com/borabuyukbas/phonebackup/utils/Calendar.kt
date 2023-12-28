@@ -4,7 +4,7 @@ import android.content.Context
 import android.provider.CalendarContract
 import androidx.compose.runtime.MutableState
 
-class Calendar(
+data class Calendar(
     val dtStart: Int?,
     val dtEnd: Int?,
     val duration: String?,
@@ -25,10 +25,6 @@ class Calendar(
     val availability: Int?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
-    }
-
-    override fun isExist(context: Context): Boolean {
         TODO("Not yet implemented")
     }
 

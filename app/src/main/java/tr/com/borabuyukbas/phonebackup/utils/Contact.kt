@@ -5,16 +5,12 @@ import android.provider.ContactsContract
 import androidx.compose.runtime.MutableState
 
 
-class Contact (
+data class Contact (
     val name: String?,
     val phoneNumbers: List<String>
 ) : BaseUtil {
 
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
-    }
-
-    override fun isExist(context: Context): Boolean {
         TODO("Not yet implemented")
     }
 

@@ -4,7 +4,7 @@ import android.content.Context
 import android.provider.CallLog.Calls
 import androidx.compose.runtime.MutableState
 
-class Call (
+data class Call (
     val number: String?,
     val date: Int?,
     val type: Int?,
@@ -12,10 +12,6 @@ class Call (
     val duration: Int?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
-    }
-
-    override fun isExist(context: Context): Boolean {
         TODO("Not yet implemented")
     }
 
