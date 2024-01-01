@@ -5,9 +5,10 @@ import android.provider.CalendarContract
 import androidx.compose.runtime.MutableState
 
 data class Calendar(
-    val dtStart: Int?,
-    val dtEnd: Int?,
+    val dtStart: Long?,
+    val dtEnd: Long?,
     val duration: String?,
+    val title: String?,
     val description: String?,
     val eventLocation: String?,
     val eventTimeZone: String?,
@@ -41,6 +42,7 @@ data class Calendar(
                     CalendarContract.Events.DTSTART,
                     CalendarContract.Events.DTEND,
                     CalendarContract.Events.DURATION,
+                    CalendarContract.Events.TITLE,
                     CalendarContract.Events.DESCRIPTION,
                     CalendarContract.Events.EVENT_LOCATION,
                     CalendarContract.Events.EVENT_TIMEZONE,
@@ -89,6 +91,7 @@ data class Calendar(
                         getValue(cursor, 15),
                         getValue(cursor, 16),
                         getValue(cursor, 17),
+                        getValue(cursor, 18),
                     )
                 )
 

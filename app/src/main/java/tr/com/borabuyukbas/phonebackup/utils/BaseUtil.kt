@@ -17,6 +17,7 @@ inline fun <reified T> getValue(cursor: Cursor, index: Int): T? {
         String::class -> cursor.getString(index) as T
         Boolean::class -> (cursor.getInt(index) == 1) as T
         Int::class -> cursor.getInt(index) as T
+        Long::class -> cursor.getLong(index) as T
         else -> throw Exception("Unhandled return type")
     }
 }

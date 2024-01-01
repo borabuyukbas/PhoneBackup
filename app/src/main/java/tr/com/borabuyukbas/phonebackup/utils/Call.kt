@@ -6,7 +6,7 @@ import androidx.compose.runtime.MutableState
 
 data class Call (
     val number: String?,
-    val date: Int?,
+    val date: Long?,
     val type: Int?,
     val new: Boolean?,
     val duration: Int?

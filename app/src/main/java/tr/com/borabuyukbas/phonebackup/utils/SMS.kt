@@ -8,7 +8,7 @@ data class SMS(
     val address: String?,
     val body: String?,
     val type: Int?,
-    val date: String?,
+    val date: Long?,
     val read: Boolean?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
