@@ -10,21 +10,46 @@ data class SMS(
     val body: String?,
     val type: Int?,
     val date: Long?,
-    val read: Boolean?
 ) : BaseUtil {
+    private var read: Boolean? = null // To exclude it from comparison/de-duplication.
+
+    constructor(
+        address: String?,
+        body: String?,
+        type: Int?,
+        date: Long?,
+        read: Boolean?
+    ) : this(address, body, type, date) {
+        this.read = read
+    }
+
     override fun importToDevice(context: Context) {
+        if (address == null) return
+
+        if (!threadIdMap.containsKey(address)) {
+            val threadId = Telephony.Threads.getOrCreateThreadId(
+                context,
+                address
+            )
+            threadIdMap[address] = threadId
+        }
+
         val values = ContentValues().apply {
             put(Telephony.Sms.ADDRESS, address)
             put(Telephony.Sms.BODY, body)
             put(Telephony.Sms.TYPE, type)
-            put(Telephony.Sms.DATE_SENT, date)
+            put(Telephony.Sms.DATE, date)
             put(Telephony.Sms.READ, read)
+
+            put(Telephony.Sms.THREAD_ID, threadIdMap[address])
         }
 
         context.contentResolver.insert(Telephony.Sms.CONTENT_URI, values)
     }
 
     companion object : BaseUtilHelper<SMS> {
+        private val threadIdMap: MutableMap<String, Long> = mutableMapOf()
+
         override suspend fun getAll(context: Context, progress: MutableState<Float>?): List<SMS> {
             val returnList = mutableListOf<SMS>()
 
