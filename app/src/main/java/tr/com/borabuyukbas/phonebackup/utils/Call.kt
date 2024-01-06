@@ -1,5 +1,6 @@
 package tr.com.borabuyukbas.phonebackup.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.provider.CallLog.Calls
 import androidx.compose.runtime.MutableState
@@ -12,7 +13,15 @@ data class Call (
     val duration: Int?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
+        val values = ContentValues().apply {
+            put(Calls.NUMBER, number)
+            put(Calls.DATE, date)
+            put(Calls.TYPE, type)
+            put(Calls.NEW, new)
+            put(Calls.DURATION, duration)
+        }
+
+        context.contentResolver.insert(Calls.CONTENT_URI, values)
     }
 
     companion object : BaseUtilHelper<Call> {

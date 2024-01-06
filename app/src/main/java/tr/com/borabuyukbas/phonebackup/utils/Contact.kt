@@ -1,7 +1,10 @@
 package tr.com.borabuyukbas.phonebackup.utils
 
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.StructuredName
 import androidx.compose.runtime.MutableState
 
 
@@ -11,7 +14,26 @@ data class Contact (
 ) : BaseUtil {
 
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
+        val rawContactUri = context.contentResolver.insert(ContactsContract.RawContacts.CONTENT_URI, ContentValues())
+        val rawContactId = rawContactUri?.let { ContentUris.parseId(it) }
+
+        val nameValues = ContentValues().apply {
+            put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+            put(ContactsContract.Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+            put(StructuredName.DISPLAY_NAME, name)
+        }
+        context.contentResolver.insert(ContactsContract.Data.CONTENT_URI, nameValues)
+
+        for (phoneNumber in phoneNumbers) {
+            val phoneValues = ContentValues().apply {
+                put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId)
+                put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
+                put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+            }
+
+            context.contentResolver.insert(ContactsContract.Data.CONTENT_URI, phoneValues)
+        }
     }
 
     companion object : BaseUtilHelper<Contact> {

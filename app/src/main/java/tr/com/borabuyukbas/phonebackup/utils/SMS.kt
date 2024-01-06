@@ -1,5 +1,6 @@
 package tr.com.borabuyukbas.phonebackup.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.provider.Telephony
 import androidx.compose.runtime.MutableState
@@ -12,7 +13,15 @@ data class SMS(
     val read: Boolean?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
+        val values = ContentValues().apply {
+            put(Telephony.Sms.ADDRESS, address)
+            put(Telephony.Sms.BODY, body)
+            put(Telephony.Sms.TYPE, type)
+            put(Telephony.Sms.DATE_SENT, date)
+            put(Telephony.Sms.READ, read)
+        }
+
+        context.contentResolver.insert(Telephony.Sms.CONTENT_URI, values)
     }
 
     companion object : BaseUtilHelper<SMS> {

@@ -1,5 +1,6 @@
 package tr.com.borabuyukbas.phonebackup.utils
 
+import android.content.ContentValues
 import android.content.Context
 import android.provider.CalendarContract
 import androidx.compose.runtime.MutableState
@@ -26,10 +27,63 @@ data class Calendar(
     val availability: Int?
 ) : BaseUtil {
     override fun importToDevice(context: Context) {
-        TODO("Not yet implemented")
+        val values = ContentValues().apply {
+            put(CalendarContract.Events.CALENDAR_ID, defaultCalendarId.value(context))
+            put(CalendarContract.Events.DTSTART, dtStart)
+            put(CalendarContract.Events.DTEND, dtEnd)
+            put(CalendarContract.Events.DURATION, duration)
+            put(CalendarContract.Events.TITLE, title)
+            put(CalendarContract.Events.DESCRIPTION, description)
+            put(CalendarContract.Events.EVENT_LOCATION, eventLocation)
+            put(CalendarContract.Events.EVENT_TIMEZONE, eventTimeZone)
+            put(CalendarContract.Events.ALL_DAY, allDay)
+            put(CalendarContract.Events.EXDATE, exDate)
+            put(CalendarContract.Events.EXRULE, exRule)
+            put(CalendarContract.Events.RDATE, rDate)
+            put(CalendarContract.Events.RRULE, rRule)
+            put(CalendarContract.Events.HAS_ALARM, hasAlarm)
+            put(CalendarContract.Events.STATUS, status)
+            put(CalendarContract.Events.SELF_ATTENDEE_STATUS, selfAttendeeStatus)
+            put(CalendarContract.Events.ORGANIZER, organizer)
+            put(CalendarContract.Events.HAS_ATTENDEE_DATA, hasAttendeeData)
+            put(CalendarContract.Events.ACCESS_LEVEL, accessLevel)
+            put(CalendarContract.Events.AVAILABILITY, availability)
+        }
+
+        context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
     }
 
     companion object : BaseUtilHelper<Calendar> {
+        private val defaultCalendarId: Lazy<(Context) -> Long?> by lazy {
+            lazy {
+                { context: Context ->
+                    getDefaultCalendarId(context)
+                        ?: throw IllegalStateException("Default calendar ID not found.")
+                }
+            }
+        }
+
+        private fun getDefaultCalendarId(context: Context): Long? {
+            val projection = arrayOf(CalendarContract.Calendars._ID)
+            val selection = "${CalendarContract.Calendars.IS_PRIMARY} = 1"
+
+            val cursor = context.contentResolver.query(
+                CalendarContract.Calendars.CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null
+            )
+
+            cursor?.use {
+                if (cursor.moveToFirst()) {
+                    return getValue<Long>(cursor, 0)
+                }
+            }
+
+            return null
+        }
+
         override suspend fun getAll(
             context: Context,
             progress: MutableState<Float>?

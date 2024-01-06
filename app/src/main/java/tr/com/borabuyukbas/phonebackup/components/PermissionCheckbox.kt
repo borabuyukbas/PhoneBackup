@@ -28,7 +28,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: String, checked: MutableState<Boolean>, progress: MutableFloatState, loading: MutableState<Boolean>) {
+fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: String, checked: MutableState<Boolean>, progress: MutableFloatState, loading: MutableState<Boolean>, forceDisable: Boolean = false) {
     val (checkedState, onStateChange) = checked
 
     val permissionState = rememberPermissionState(requiredPermission)
@@ -41,11 +41,10 @@ fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: Stri
                 value = checkedState,
                 onValueChange = { onStateChange(!checkedState) },
                 role = Role.Checkbox,
-                enabled = permissionState.status == PermissionStatus.Granted
+                enabled = permissionState.status == PermissionStatus.Granted && !forceDisable
             )
-            .background(if(permissionState.status != PermissionStatus.Granted) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.inversePrimary)
-            .padding(18.dp)
-        ,
+            .background(if(permissionState.status != PermissionStatus.Granted || forceDisable) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.inversePrimary)
+            .padding(18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -67,6 +66,7 @@ fun PermissionCheckbox(text: String, icon: ImageVector, requiredPermission: Stri
         if (permissionState.status != PermissionStatus.Granted) {
             Button(
                 onClick = { permissionState.launchPermissionRequest() },
+                enabled = !forceDisable
             ) {
                 Text("Allow")
             }
