@@ -124,7 +124,7 @@ fun Restore() {
                     Text(text = "Choose")
                 }
             }
-            PermissionCheckbox("SMS", Icons.Filled.Email, Manifest.permission.READ_SMS, smsChecked, smsProgress, smsLoading, parsedObject.value == null || parsedObject.value!!.sms.isEmpty())
+            PermissionCheckbox("SMS", Icons.Filled.Email, Manifest.permission.READ_SMS, smsChecked, smsProgress, smsLoading, parsedObject.value == null || parsedObject.value!!.sms.isEmpty(), checkDefaultSMS = true)
             PermissionCheckbox("Contacts", Icons.Filled.Person, Manifest.permission.WRITE_CONTACTS, contactsChecked, contactsProgress, contactsLoading, parsedObject.value == null || parsedObject.value!!.contacts.isEmpty())
             PermissionCheckbox("Call Logs", Icons.Filled.Phone, Manifest.permission.WRITE_CALL_LOG, callLogsChecked, callLogsProgress, callLogsLoading, parsedObject.value == null || parsedObject.value!!.calls.isEmpty())
             PermissionCheckbox("Calendar", Icons.Filled.DateRange, Manifest.permission.WRITE_CALENDAR, calendarChecked, calendarProgress, calendarLoading, parsedObject.value == null || parsedObject.value!!.calendar.isEmpty())
